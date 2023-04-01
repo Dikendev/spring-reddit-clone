@@ -1,12 +1,12 @@
 package com.project.springredditclone.service;
 
-import com.project.springredditclone.controller.dto.RegisterRequest;
+import com.project.springredditclone.dto.RegisterRequest;
+import com.project.springredditclone.model.NotificationEmail;
 import com.project.springredditclone.model.User;
 import com.project.springredditclone.model.VerificationToken;
 import com.project.springredditclone.repository.UserRepository;
 import com.project.springredditclone.repository.VerificationTokenRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +22,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final VerificationTokenRepository verificationTokenRepository;
+    private final MailService mailService;
 
     @Transactional
     public void signup(RegisterRequest registerRequest) {
@@ -34,7 +35,11 @@ public class AuthService {
 
         userRepository.save(user);
 
-        generateVerificationToken(user);
+        String token = generateVerificationToken(user);
+        mailService.sendMail(new NotificationEmail("Please Active your account",
+                user.getEmail(), "Thanks for signing up " +
+                "please click on the below url to activate your account : " +
+                "http://localhost:8080/api/auth/accountVerification/" + token));
     }
 
     private String generateVerificationToken(User user) {
