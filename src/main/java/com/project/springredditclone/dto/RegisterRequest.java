@@ -1,4 +1,4 @@
-package com.project.springredditclone.controller.dto;
+package com.project.springredditclone.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
